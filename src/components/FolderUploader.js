@@ -9,6 +9,11 @@ import { formatDate } from '../utils/DateFormatter';
 export default function FolderUploader(props) {
     const fileListColumns = [
         {
+            title: '编号',
+            key: 'fileNumber',
+            dataIndex: 'fileNumber',
+        },
+        {
             title: '文件名',
             key: 'filename',
             dataIndex: 'filename',
@@ -45,16 +50,17 @@ export default function FolderUploader(props) {
 
     const uploadFolder = (event) => {
         let files = [...event.target.files].filter(($0) => { return $0.name.endsWith('.dat') });
+        files = files.sort(($0, $1) => {return $0.name < $1.name});
         let newFileInfoList = [];
-        for (let file of files) {
+        for (let [index, file] of files.entries()) {
             newFileInfoList.push({
                 key: file.name,
+                fileNumber: index + 1,
                 filename: file.name,
                 lastModified: file.lastModified,
                 lastModifiedDate: formatDate(file.lastModifiedDate, 'yyyy/MM/dd hh:mm:ss'),
             });
         }
-        files = files.sort(($0, $1) => {return $0.name < $1.name});
         props.handleUploadingFiles(files, newFileInfoList);
     }
 
