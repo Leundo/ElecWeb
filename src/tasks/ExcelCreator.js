@@ -84,9 +84,80 @@ const continuingCreatingCelueExcelForOneFileByLine = async (starter, file) => {
     return starter
 }
 
+const startingCreatingGuzhangExcelForOneFileByLine = () => {
+    let workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Leundo';
+    let structure = displayedSectionStructures.find((structure) => {
+        return structure.name == '基于故障算例结果::西北'
+    });
+    let sheet = workbook.addWorksheet(structure.name.replace('::', '-'));
+    sheet.columns = structure.keys.map(($0) => {
+        return { header: $0, key: $0, width: 30, style: { font: { size: 18 } } };
+    });
+    // starter
+    return {
+        workbook: workbook,
+        sheet: sheet,
+        structure: structure,
+    }
+}
+
+const continuingCreatingGuzhangExcelForOneFileByLine = async (starter, file) => {
+    let qsFile = await QsFile.newFromFile(file);
+    let section = qsFile.getSection(starter.structure.name);
+
+    starter.sheet.addRow([`${file.name}`])
+    starter.sheet.addRow(starter.structure.keys.map(($0) => {
+        return section.getDescription($0);
+    }));
+    starter.sheet.addRows(createRows(section, starter.structure.keys, createSurvey(starter.structure.name)));
+    starter.sheet.addRow([''])
+    starter.sheet.addRow([''])
+    return starter
+}
+
+
+const startingCreatingSanfaExcelForOneFileByLine = () => {
+    let workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Leundo';
+    let structure = displayedSectionStructures.find((structure) => {
+        return structure.name == '第三道防线发电机保护动作表::西北'
+    });
+    let sheet = workbook.addWorksheet(structure.name.replace('::', '-'));
+    sheet.columns = structure.keys.map(($0) => {
+        return { header: $0, key: $0, width: 30, style: { font: { size: 18 } } };
+    });
+    // starter
+    return {
+        workbook: workbook,
+        sheet: sheet,
+        structure: structure,
+    }
+}
+
+const continuingCreatingSanfaExcelForOneFileByLine = async (starter, file) => {
+    let qsFile = await QsFile.newFromFile(file);
+    let section = qsFile.getSection(starter.structure.name);
+
+    starter.sheet.addRow([`${file.name}`])
+    starter.sheet.addRow(starter.structure.keys.map(($0) => {
+        return section.getDescription($0);
+    }));
+    starter.sheet.addRows(createRows(section, starter.structure.keys, createSurvey(starter.structure.name)));
+    starter.sheet.addRow([''])
+    starter.sheet.addRow([''])
+    return starter
+}
+
 
 export {
     createExcelForOneFile,
     startingCreatingCelueExcelForOneFileByLine,
     continuingCreatingCelueExcelForOneFileByLine,
+
+    startingCreatingGuzhangExcelForOneFileByLine,
+    continuingCreatingGuzhangExcelForOneFileByLine,
+
+    startingCreatingSanfaExcelForOneFileByLine,
+    continuingCreatingSanfaExcelForOneFileByLine,
 };
