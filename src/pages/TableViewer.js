@@ -14,7 +14,7 @@ import { displayedSectionStructures } from '../utils/Configuration';
 import SectionTable from '../components/SectionTable';
 import { createEquipmentMap } from '../tasks/MapCreator';
 import { createInputSheetForOneFile, createEvaluationSheetForOneFile, createControlSheetForOneFile, createChuanlianSheetForOneFile, createRongkangSheetForOneFile, createBianyaSheetForOneFile, createChangzhanSheetForOneFile, createXiandianSheetForOneFile, createJiaoxianSheetForOneFile, createFuheSheetForOneFile, createFadianSheetForOneFile, createMuxianSheetForOneFile, createCelueSheetForOneFile, createGuzhangSheetForOneFile } from '../tasks/SheetCreator';
-import { createExcelForOneFile } from '../tasks/ExcelCreator';
+import { createExcelForOneFile, startingCreatingCelueExcelForOneFileByLine, continuingCreatingCelueExcelForOneFileByLine } from '../tasks/ExcelCreator';
 
 export default function TableViewer(props) {
     const [files, setFiles] = useState([]);
@@ -100,6 +100,19 @@ export default function TableViewer(props) {
             saveAs(blob, `${file.name.split('.').slice(0, -1).join('.')}.xlsx`);
             setProgressPercent((index * 100 / files.length).toFixed(2));
         }
+    }
+
+    const handleExportingCelueExcelForAllFilesByLine = async (event) => {
+        setProgressPercent(0);
+        let starter = startingCreatingCelueExcelForOneFileByLine();
+        for (const [index, file] of [...files].entries()) {
+            starter = await continuingCreatingCelueExcelForOneFileByLine(starter, file);
+            setProgressPercent((index * 100 / files.length).toFixed(2));
+        }
+
+        const buffer = await starter.workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, `Celue.xlsx`);
     }
 
     const handleCheckingSandongSectionForAllFiles = async (event) => {
@@ -428,6 +441,11 @@ export default function TableViewer(props) {
                                     导出全部控制标签
                                 </Button>
                             </Space>
+                        </Descriptions.Item>
+                        <Descriptions.Item label='行表动作' span={3}>
+                            <Button onClick={handleExportingCelueExcelForAllFilesByLine}>
+                                导出策略表
+                            </Button>
                         </Descriptions.Item>
                         <Descriptions.Item label='数据表导出动作' span={3}>
                             <Space>
