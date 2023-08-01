@@ -97,7 +97,7 @@ export default function TableViewer(props) {
             let qsFile = await QsFile.newFromFile(file);
             const buffer = await createExcelForOneFile(qsFile).xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, `${file.name.split('.').slice(0, -1).join('.')}.xlsx`);
+            saveAs(blob, `${index}_${file.name.split('.').slice(0, -1).join('.')}.xlsx`);
             setProgressPercent((index * 100 / files.length).toFixed(2));
         }
     }
